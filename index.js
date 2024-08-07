@@ -16,6 +16,8 @@ app.get("/approvals", (req, res) => {
   res.send(`Hello approval request: ${req.query.approvalID}`);
 });
 
+const idToDetailsMap = {};
+
 app.use(express.json());
 
 // Middleware to check the API key
@@ -38,13 +40,16 @@ app.use((req, res, next) => {
 
 app.post("/api/approvals", (req, res) => {
   const approvalId = uuidv4();
-  res.status(201).json({
+  idToDetailsMap[approvalId] = req.body.details;
+  const responseBody = {
     id: approvalId,
     result: {
       status: "pending",
       displayStatus: "Pending",
     },
-  });
+  };
+  console.log("Responding with:\n", responseBody);
+  res.status(201).json(responseBody);
 });
 
 app.get("/api/approvals/:id/status", (req, res) => {
@@ -54,21 +59,23 @@ app.get("/api/approvals/:id/status", (req, res) => {
     displayStatus: randomStatus,
   };
 
-  const random = Math.random();
-  console.log("Random number: ", random);
-  if (random < 0.2) {
+  const details = idToDetailsMap[req.params.id];
+  randomValue = Math.random();
+  if (details?.toLowerCase().includes("please") || randomValue < 0.33) {
     result.status = "approved";
     result.displayStatus = "Approved";
   }
 
-  if (random > 0.9) {
+  if (details?.toLowerCase().includes("!")) {
     result.status = "declined";
-    result.displayStatus = "Declined";
+    result.displayStatus = "Don't be so rude!";
   }
 
-  res.status(200).json({
+  const responseBody = {
     result,
-  });
+  };
+  console.log("Responding with:\n", responseBody);
+  res.status(200).json(responseBody);
 });
 
 app.patch("/api/approvals/:id/cancel", (req, res) => {
@@ -78,7 +85,9 @@ app.patch("/api/approvals/:id/cancel", (req, res) => {
 
 app.patch("/api/approvals/:id/applied", (req, res) => {
   // Add logic to do something after the approval request has been applied in LaunchDarkly.
-  res.status(204).send();
+  res
+    .status(200)
+    .send({ result: { status: "approved", displayStatus: "Approved" } });
 });
 
 app.listen(port, () => {
