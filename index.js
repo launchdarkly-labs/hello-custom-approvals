@@ -71,6 +71,31 @@ app.get("/api/approvals/:id/status", (req, res) => {
   });
 });
 
+// dynamic enum
+app.get("/api/colors", (req, res) => {
+  const result = {
+    "data": [
+      {
+        "name": "Vlue",
+        "value": "blue"
+      },
+      {
+        "name": "Red",
+        "value": "red"
+      },
+      {
+        "name": "Green",
+        "value": "green"
+      },
+      {
+        "name": "Yellow",
+        "value": "yellow"
+      }
+    ]
+  }
+  res.status(200).json(result);
+})
+
 app.patch("/api/approvals/:id/cancel", (req, res) => {
   // Add logic to do something after the approval request has been deleted in LaunchDarkly.
   res.status(204).send();
