@@ -39,69 +39,69 @@ app.use((req, res, next) => {
 app.post("/api/approvals", (req, res) => {
   const approvalId = uuidv4();
   res.status(201).json({
-    id: approvalId,
-    result: {
-      status: "pending",
-      displayStatus: "Pending",
+    _id: approvalId,
+    status: {
+      value: "pending",
+      display: "Pending",
     },
   });
 });
 
 app.get("/api/approvals/:id/status", (req, res) => {
   const randomStatus = jabber.createWord(6, true);
-  const result = {
-    status: randomStatus,
-    displayStatus: randomStatus,
+  const status = {
+    value: randomStatus,
+    display: randomStatus,
   };
 
   const random = Math.random();
   console.log("Random number: ", random);
   if (random < 0.2) {
-    result.status = "approved";
-    result.displayStatus = "Approved";
+    status.value = "approved";
+    status.display = "Approved";
   }
 
   if (random > 0.9) {
-    result.status = "declined";
-    result.displayStatus = "Declined";
+    status.value = "declined";
+    status.display = "Declined";
   }
 
   res.status(200).json({
-    result,
+    status,
   });
 });
 
 // dynamic enum
 app.get("/api/colors", (req, res) => {
   const result = {
-    "data": [
+    data: [
       {
-        "name": "Vlue",
-        "value": "blue"
+        name: "Vlue",
+        value: "blue",
       },
       {
-        "name": "Red",
-        "value": "red"
+        name: "Red",
+        value: "red",
       },
       {
-        "name": "Green",
-        "value": "green"
+        name: "Green",
+        value: "green",
       },
       {
-        "name": "Yellow",
-        "value": "yellow"
-      }
-    ]
-  }
+        name: "Yellow",
+        value: "yellow",
+      },
+    ],
+  };
   res.status(200).json(result);
-})
+});
 
 app.patch("/api/approvals/:id/cancel", (req, res) => {
   // Add logic to do something after the approval request has been deleted in LaunchDarkly.
   res.status(204).send();
 });
 
-app.patch("/api/approvals/:id/applied", (req, res) => {
+app.patch("/api/approvals/:id/apply", (req, res) => {
   // Add logic to do something after the approval request has been applied in LaunchDarkly.
   res.status(204).send();
 });
