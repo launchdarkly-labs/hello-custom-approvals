@@ -76,7 +76,7 @@ app.get("/api/colors", (req, res) => {
   const result = {
     data: [
       {
-        name: "Vlue",
+        name: "Blue",
         value: "blue",
       },
       {
